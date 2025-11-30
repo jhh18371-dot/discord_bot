@@ -38,7 +38,10 @@ async def send_daily_message():
     else:
         print("❌ 채널을 찾을 수 없습니다!")
 
-
+def run():
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
+    
 # 🔥 테스트 명령어
 @bot.command()
 async def test(ctx):
