@@ -7,13 +7,14 @@ import datetime
 from flask import Flask
 from threading import Thread
 
-app = Flask('')
+app = Flask(__name__)
 
-@app.route('/')
+@app.route("/")
 def home():
     return "I'm alive"
 
 def run():
+    # Render 쪽에서 PORT 환경변수를 넘겨주므로, 있으면 그걸 쓰고 없으면 8080 사용
     port = int(os.environ.get("PORT", 8080))
     app.run(host="0.0.0.0", port=port)
 
@@ -28,7 +29,7 @@ def keep_alive():
 TOKEN = os.environ.get("TOKEN")
 
 # ✔ 알림 보낼 채널 ID
-CHANNEL_ID = 14447109933124354158  # 너가 넣은 값 그대로 둠
+CHANNEL_ID = 14447109933124354158  # 네가 넣어둔 값 그대로
 
 # ✔ 인텐트 설정
 intents = discord.Intents.default()
@@ -37,7 +38,7 @@ intents.message_content = True  # 메시지 내용 읽기/보내기 위해 필�
 # ✔ 봇 생성
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-# ✔ 한국 시간대 설정 (UTC+9)
+# ✔ 한국 시간대 설정 (UTC+9) - 나중에 시각 기반 알림 쓸 때 사용
 KST = datetime.timezone(datetime.timedelta(hours=9))
 
 
@@ -50,12 +51,12 @@ async def on_ready():
         send_daily_message.start()
 
 
-# 🔥 아침 9시 자동 메시지
-@tasks.loop(time=datetime.time(hour=9, minute=0, tzinfo=KST))
+# 🔥 10분마다 자동 메시지 (테스트용)
+@tasks.loop(minutes=10)
 async def send_daily_message():
     channel = bot.get_channel(CHANNEL_ID)
     if channel:
-        await channel.send("🌅좋은아침! 출력 테스트 부하형 !")
+        await channel.send("⏰ 10분 테스트 알림! (서버 잘 돌아가는지 확인용)")
     else:
         print("❌ 채널을 찾을 수 없습니다!")
 
@@ -65,21 +66,7 @@ async def send_daily_message():
 async def test(ctx):
     await ctx.send("✔ 테스트 알림 도착! /ᐠ. .ᐟ\\")
 
-from flask import Flask
-from threading import Thread
 
-app = Flask(__name__)
-
-@app.route("/")
-def home():
-    return "Bot is alive!"
-
-def run():
-    app.run(host="0.0.0.0", port=10000)
-
-def keep_alive():
-    t = Thread(target=run)
-    t.start()
 # ==== 🔥 핵심: 웹서버를 먼저 실행시켜 Render가 안 자게 하기 ==== #
 keep_alive()
 
