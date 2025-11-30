@@ -43,7 +43,7 @@ async def send_daily_message():
 @bot.command()
 async def test(ctx):
     await ctx.send("✔ 테스트 알림 도착! /ᐠ. .ᐟ\\")
-
+ 
 
 # 🔥 봇 실행
 bot.run(TOKEN)
