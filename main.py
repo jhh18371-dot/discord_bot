@@ -65,7 +65,21 @@ async def send_daily_message():
 async def test(ctx):
     await ctx.send("✔ 테스트 알림 도착! /ᐠ. .ᐟ\\")
 
+from flask import Flask
+from threading import Thread
 
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return "Bot is alive!"
+
+def run():
+    app.run(host="0.0.0.0", port=10000)
+
+def keep_alive():
+    t = Thread(target=run)
+    t.start()
 # ==== 🔥 핵심: 웹서버를 먼저 실행시켜 Render가 안 자게 하기 ==== #
 keep_alive()
 
